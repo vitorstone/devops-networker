@@ -1,0 +1,30 @@
+name: Update Google Sheet
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'data/contributors.csv'
+
+jobs:
+  update-sheet:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install Google Sheets API dependencies
+      run: |
+        pip3 install google-api-python-client google-auth-oauthlib
+
+    - name: Update Google Sheet
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+      run: |
+        python scripts/update_google_sheet.py
